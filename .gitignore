@@ -1,0 +1,6 @@
+build-tools/OpenSSL/dest
+build-tools/OpenSSL/src
+build-tools/POCO/dest
+build-tools/POCO/src
+build-tools/SQLCipher/dest
+build-tools/SQLCipher/src
