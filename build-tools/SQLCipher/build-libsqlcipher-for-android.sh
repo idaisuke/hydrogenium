@@ -12,11 +12,11 @@ fi
 #
 ################################################################################
 
-# OpenSSL Version
-OPENSSL_VERSION="1_0_2f"
+# SQLCipher Version
+SQLCIPHER_REPOSITORY_TAG="v3.3.1"
 
-# Android Platform Version
-ANDROID_PLATFORM="android-21"
+# OpenSSL Version
+OPENSSL_REPOSITORY_TAG="OpenSSL_1_0_2f"
 
 ################################################################################
 #
@@ -26,7 +26,7 @@ ANDROID_PLATFORM="android-21"
 SCRIPT_DIR=$(cd -P $(dirname $0) && pwd -P)
 
 # OpenSSL Root Path
-OPENSSL_PATH="${SCRIPT_DIR}/../OpenSSL/dest/${OPENSSL_VERSION}/Android"
+OPENSSL_PATH="${SCRIPT_DIR}/../OpenSSL/dest/${OPENSSL_REPOSITORY_TAG}/Android"
 
 # OpenSSL Include Path(armeabi)
 OPENSSL_INCLUDE_PATH_ARM="${OPENSSL_PATH}/armeabi/include"
@@ -47,16 +47,25 @@ OPENSSL_INCLUDE_PATH_X86="${OPENSSL_PATH}/x86/include"
 OPENSSL_LIBRARY_PATH_X86="${OPENSSL_PATH}/x86/lib"
 
 # SQLCipher Git Repository URL
-REPOSITORY_URL="git://github.com/sqlcipher/sqlcipher.git"
+SQLCIPHER_REPOSITORY_URL="git://github.com/sqlcipher/sqlcipher.git"
 
 # SQLCipher Source Directory Path
-SRC_DIR="${SCRIPT_DIR}/src/sqlcipher"
+SRC_DIR="${SCRIPT_DIR}/src/sqlcipher/${SQLCIPHER_REPOSITORY_TAG}"
 
 # Output Directory Path
-OUTPUT_DIR="${SCRIPT_DIR}/dest/Android"
+OUTPUT_DIR="${SCRIPT_DIR}/dest/${SQLCIPHER_REPOSITORY_TAG}/Android"
+
+# Android Platform Version
+ANDROID_PLATFORM="android-19"
 
 # Android NDK standalone-toolchain Path
-NDK_TOOLCHAIN_PATH="${OUTPUT_DIR}/d174a27c-c7aa-4fda-ad53-d1fea50d3117"
+NDK_TOOLCHAIN_PATH="${OUTPUT_DIR}/toolchain"
+
+# Android NDK standalone-toolchain(ARM)
+ARM_TOOLCHAIN="arm-linux-androideabi-4.9"
+
+# Android NDK standalone-toolchain(x86)
+X86_TOOLCHAIN="x86-4.9"
 
 # Android NDK standalone-toolchain Path(ARM)
 ARM_TOOLCHAIN_PATH="${NDK_TOOLCHAIN_PATH}/arm"
@@ -70,7 +79,7 @@ X86_TOOLCHAIN_PATH="${NDK_TOOLCHAIN_PATH}/x86"
 
 # git clone
 rm -rf "${SRC_DIR}"
-git clone "${REPOSITORY_URL}" "${SRC_DIR}"
+git clone -b "${SQLCIPHER_REPOSITORY_TAG}" "${SQLCIPHER_REPOSITORY_URL}" "${SRC_DIR}"
 
 ################################################################################
 #
@@ -78,7 +87,7 @@ git clone "${REPOSITORY_URL}" "${SRC_DIR}"
 
 # make Android NDK standalone-toolchain(ARM)
 rm -rf "${ARM_TOOLCHAIN_PATH}"
-"${NDK_ROOT}/build/tools/make-standalone-toolchain.sh" --arch=arm "--install-dir=${ARM_TOOLCHAIN_PATH}" "--platform=${ANDROID_PLATFORM}"
+"${NDK_ROOT}/build/tools/make-standalone-toolchain.sh" --arch=arm --toolchain="${ARM_TOOLCHAIN}" --install-dir="${ARM_TOOLCHAIN_PATH}" --platform="${ANDROID_PLATFORM}"
 
 find "${ARM_TOOLCHAIN_PATH}/bin" -name arm-linux-androideabi* -type f | while read FILE
 do
@@ -87,7 +96,7 @@ done
 
 # make Android NDK standalone-toolchain(x86)
 rm -rf "${X86_TOOLCHAIN_PATH}"
-"${NDK_ROOT}/build/tools/make-standalone-toolchain.sh" --arch=x86 "--install-dir=${X86_TOOLCHAIN_PATH}" "--platform=${ANDROID_PLATFORM}"
+"${NDK_ROOT}/build/tools/make-standalone-toolchain.sh" --arch=x86 --toolchain="${X86_TOOLCHAIN}" --install-dir="${X86_TOOLCHAIN_PATH}" --platform="${ANDROID_PLATFORM}"
 
 find "${X86_TOOLCHAIN_PATH}/bin" -name i686-linux-android* -type f | while read FILE
 do
